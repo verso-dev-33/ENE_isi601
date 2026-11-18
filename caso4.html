@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Restaurante Siglo XXI</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Concepto: sistema web del restaurante con barra superior, menú por rol y tarjetas grandes. Atkinson Hyperlegible por su legibilidad. */
+:root{
+  --bg:#F1F5F3; --surface:#FFFFFF; --surface2:#E8EFEB; --fg:#14231C; --muted:#44584E; --line:#BCCBC2;
+  --brand:#1F6B4F; --on-brand:#FFFFFF; --accent:#9A5B00; --accentbg:#FFF1D6;
+  --ok:#17653F; --bad:#A8231B; --okbg:#DDF1E5; --badbg:#FBE3E0; --warnbg:#FFF1D6;
+  --fs:16px; --font:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+}
+:root[data-contrast="alto"]{--bg:#FFFFFF;--surface:#FFFFFF;--surface2:#EDEDED;--fg:#000000;--muted:#1A1A1A;--line:#000000;--brand:#0B3D2A;--accent:#6B3A00;--ok:#0B4A2B;--bad:#8A0000}
+*{box-sizing:border-box}
+html{font-size:var(--fs)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.5;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{margin:0;line-height:1.2;text-wrap:balance}
+h2{font-size:1.5rem}h3{font-size:1.15rem}
+p{margin:0}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding-block:14px 40px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--brand);color:var(--on-brand);padding:10px 14px;border-radius:14px}
+:root[data-contrast="alto"] .top{border:2px solid #000}
+.logo{width:40px;height:40px;border-radius:50%;border:3px solid var(--on-brand);display:grid;place-items:center;font-weight:700;font-size:.8rem;flex:none}
+.brand{flex:1;min-width:160px;font-weight:700;font-size:1.15rem}.brand small{display:block;font-weight:400;font-size:.8rem;opacity:.95}
+.tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tb{background:rgba(255,255,255,.18);color:var(--on-brand);border:1px solid rgba(255,255,255,.5);border-radius:10px;padding:6px 10px;min-height:40px;cursor:pointer;font-weight:700}
+.tb:hover{background:rgba(255,255,255,.3)}
+.who{font-size:.85rem;text-align:right}.who b{display:block}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.tab{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:10px 16px;min-height:46px;cursor:pointer;font-weight:700}
+.tab[aria-current="page"]{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
+.main{display:flex;flex-direction:column;gap:16px}
+.hd{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.hd p{color:var(--muted)}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.two{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+.btn{background:var(--brand);color:var(--on-brand);border:2px solid var(--brand);border-radius:12px;padding:10px 18px;min-height:46px;font-weight:700;cursor:pointer}
+.btn:hover{filter:brightness(1.12)}
+.btn.sec{background:var(--surface);color:var(--fg);border-color:var(--line)}
+.btn.danger{background:var(--surface);color:var(--bad);border-color:var(--bad)}
+.btn.sm{padding:4px 12px;min-height:38px;font-size:.9rem}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fld{display:flex;flex-direction:column;gap:4px;min-width:170px;flex:1}
+label,.lbl{font-weight:700;font-size:.9rem}
+input[type=text],input[type=password],input[type=email],input[type=number],select{background:var(--surface);border:2px solid var(--line);border-radius:10px;padding:9px 11px;min-height:46px;width:100%}
+.inv{border-color:var(--bad)!important}
+.err{color:var(--bad);font-size:.88rem;font-weight:700}
+.hint{color:var(--muted);font-size:.9rem}
+.chk{display:flex;gap:8px;align-items:center;font-weight:400;cursor:pointer}
+.chk input{width:20px;height:20px;accent-color:var(--brand)}
+.tw{overflow-x:auto;border:2px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--surface2);font-size:.82rem;text-transform:uppercase;letter-spacing:.04em}
+td.r,th.r{text-align:right}tr:last-child td{border-bottom:0}
+.pill{display:inline-block;border-radius:99px;padding:2px 10px;font-size:.82rem;font-weight:700;border:1px solid currentColor}
+.pill.ok{background:var(--okbg);color:var(--ok)}.pill.bad{background:var(--badbg);color:var(--bad)}.pill.warn{background:var(--warnbg);color:var(--accent)}.pill.off{background:var(--surface2);color:var(--muted)}
+.cats{display:flex;gap:8px;flex-wrap:wrap}
+.dish{display:flex;flex-direction:column;gap:6px;border:2px solid var(--line);border-radius:14px;padding:14px;background:var(--surface)}
+.price{font-weight:700;font-size:1.15rem}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{width:44px;height:44px;border-radius:10px;border:2px solid var(--brand);background:var(--surface);font-size:1.4rem;font-weight:700;cursor:pointer;color:var(--brand)}
+.qty span{min-width:26px;text-align:center;font-weight:700;font-size:1.1rem}
+.login{max-width:440px;margin:28px auto;display:flex;flex-direction:column;gap:14px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:24px}
+.demo{display:flex;gap:6px;flex-wrap:wrap}
+.demo button{background:var(--surface2);border:1px solid var(--line);border-radius:99px;padding:5px 12px;cursor:pointer;min-height:36px}
+.ord{border-left:8px solid var(--brand)}.ord.late{border-left-color:var(--bad)}
+.num{background:var(--brand);color:var(--on-brand);border-radius:10px;padding:2px 10px;font-weight:700}
+.big{font-size:2rem;font-weight:700}
+.rules{list-style:none;margin:2px 0 0;padding:0;font-size:.88rem;color:var(--muted)}
+.rules li::before{content:"○ "}.rules li.ok{color:var(--ok)}.rules li.ok::before{content:"● "}
+details{border:2px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface)}
+summary{font-weight:700;cursor:pointer;min-height:32px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:12px 18px;border-radius:12px;z-index:9;font-weight:700;max-width:90vw}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:16px;z-index:8}
+.modal>div{background:var(--surface);border-radius:16px;padding:22px;max-width:420px;width:100%;display:flex;flex-direction:column;gap:12px;border:2px solid var(--line)}
+.ex{font-size:.82rem;color:var(--muted);font-style:italic}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div id="layer"></div>
+<script>
+(function(){
+"use strict";
+/* ===== Datos de ejemplo ===== */
+var DISH=[
+ {id:"pastel",cat:"fondo",es:"Pastel de choclo",en:"Corn and beef pie",de:"Carne molida, pollo, huevo y aceituna bajo una capa de choclo.",dn:"Ground beef, chicken, egg and olive under a sweet corn crust.",p:9500,t:12},
+ {id:"cazuela",cat:"fondo",es:"Cazuela de vacuno",en:"Beef and vegetable stew",de:"Caldo casero con vacuno, zapallo, papa y choclo.",dn:"Homemade broth with beef, pumpkin, potato and corn.",p:8900,t:15},
+ {id:"porotos",cat:"fondo",es:"Porotos con riendas",en:"Beans with noodles",de:"Porotos con fideos, zapallo y sofrito.",dn:"Beans with noodles, pumpkin and sautéed onion.",p:8200,t:12},
+ {id:"lomo",cat:"fondo",es:"Lomo a lo pobre",en:"Steak with fries and eggs",de:"Lomo con papas fritas, cebolla y huevos fritos.",dn:"Steak with French fries, onions and fried eggs.",p:11500,t:18},
+ {id:"pescado",cat:"fondo",es:"Pescado frito con ensalada",en:"Fried fish with salad",de:"Merluza frita con ensalada chilena.",dn:"Fried hake with Chilean tomato-onion salad.",p:10900,t:16},
+ {id:"empanadas",cat:"entrada",es:"Empanadas de pino (2)",en:"Beef empanadas (2)",de:"Dos empanadas horneadas de carne, cebolla y huevo.",dn:"Two baked empanadas with beef, onion and egg.",p:4800,t:10},
+ {id:"humitas",cat:"entrada",es:"Humitas (2)",en:"Corn humitas (2)",de:"Choclo molido envuelto en su hoja.",dn:"Ground sweet corn wrapped in its husk.",p:5500,t:8},
+ {id:"sopaipillas",cat:"entrada",es:"Sopaipillas con pebre",en:"Fried pumpkin bread with pebre",de:"Cuatro sopaipillas con pebre.",dn:"Four fried pumpkin breads with fresh salsa.",p:3500,t:6},
+ {id:"ensalada",cat:"entrada",es:"Ensalada chilena",en:"Chilean salad",de:"Tomate y cebolla con cilantro.",dn:"Tomato and onion with cilantro.",p:3800,t:4},
+ {id:"leche",cat:"postre",es:"Leche asada",en:"Baked milk custard",de:"Postre casero con caramelo.",dn:"Homemade custard with caramel.",p:3500,t:0},
+ {id:"mote",cat:"postre",es:"Mote con huesillo",en:"Wheat and peach drink",de:"Durazno deshidratado con mote de trigo.",dn:"Dried peach with husked wheat.",p:3000,t:0},
+ {id:"jugo",cat:"beb",es:"Jugo natural",en:"Fresh juice",de:"Jugo de fruta de temporada.",dn:"Seasonal fruit juice.",p:2800,t:0},
+ {id:"bebida",cat:"beb",es:"Bebida",en:"Soft drink",de:"Botella personal.",dn:"Personal bottle.",p:2200,t:0}];
+var CATS=[["todos","Todos","All"],["entrada","Entradas","Starters"],["fondo","Platos de fondo","Main dishes"],["postre","Postres","Desserts"],["beb","Bebidas","Drinks"]];
+var INS=[
+ {id:"vacuno",n:"Carne de vacuno",u:"kg",s:14,m:12,pr:"Carnes del Sur (ejemplo)"},
+ {id:"choclo",n:"Choclo",u:"kg",s:6,m:10,pr:"Agrícola Maipo (ejemplo)"},
+ {id:"papas",n:"Papas",u:"kg",s:30,m:20,pr:"Agrícola Maipo (ejemplo)"},
+ {id:"cebolla",n:"Cebolla",u:"kg",s:9,m:8,pr:"Agrícola Maipo (ejemplo)"},
+ {id:"pollo",n:"Pollo",u:"kg",s:5,m:8,pr:"Carnes del Sur (ejemplo)"},
+ {id:"merluza",n:"Merluza",u:"kg",s:4,m:6,pr:"Pesquera Costa (ejemplo)"},
+ {id:"zapallo",n:"Zapallo",u:"kg",s:12,m:8,pr:"Agrícola Maipo (ejemplo)"},
+ {id:"aceite",n:"Aceite",u:"L",s:10,m:6,pr:"Distribuidora Central (ejemplo)"},
+ {id:"huevos",n:"Huevos",u:"un",s:60,m:90,pr:"Distribuidora Central (ejemplo)"},
+ {id:"harina",n:"Harina",u:"kg",s:18,m:10,pr:"Distribuidora Central (ejemplo)"}];
+var REC={pastel:[["vacuno",.12],["pollo",.08],["choclo",.3],["cebolla",.05],["huevos",1]],cazuela:[["vacuno",.2],["zapallo",.15],["papas",.15],["choclo",.1]],porotos:[["zapallo",.1],["cebolla",.05],["harina",.05]],lomo:[["vacuno",.25],["papas",.3],["huevos",2],["aceite",.05],["cebolla",.05]],pescado:[["merluza",.25],["aceite",.05],["cebolla",.05]],empanadas:[["vacuno",.1],["cebolla",.08],["harina",.12],["huevos",.5]],humitas:[["choclo",.4],["cebolla",.03]],sopaipillas:[["zapallo",.1],["harina",.15],["aceite",.04]]};
+var ROLES=["Administrador","Cliente","Bodega","Finanzas","Cocina"];
+var NAV={Administrador:[["resumen","Resumen"],["usuarios","Usuarios"],["recursos","Productos y mesas"],["pedido","Pedido a proveedores"],["actividad","Actividad"],["ayuda","Ayuda"]],
+ Cliente:[["carta","Carta y pedido"],["mipedido","Mi pedido"],["ayuda","Ayuda"]],
+ Bodega:[["stock","Stock"],["recetas","Recetas"],["pedido","Pedido a proveedores"],["ayuda","Ayuda"]],
+ Finanzas:[["caja","Caja y utilidad"],["ayuda","Ayuda"]],
+ Cocina:[["tablero","Tablero de órdenes"],["ayuda","Ayuda"]]};
+var USERS=[
+ {id:1,user:"admin",name:"José (dueño)",email:"jose@siglo21.example",role:"Administrador",active:true,locked:false,mesa:null},
+ {id:2,user:"cliente.mesa5",name:"Tableta de la mesa 5",email:"mesa5@siglo21.example",role:"Cliente",active:true,locked:false,mesa:5},
+ {id:3,user:"bodega",name:"Marta Soto",email:"msoto@siglo21.example",role:"Bodega",active:true,locked:false,mesa:null},
+ {id:4,user:"finanzas",name:"Luis Pérez",email:"lperez@siglo21.example",role:"Finanzas",active:true,locked:false,mesa:null},
+ {id:5,user:"cocina",name:"Rosa Araya",email:"raraya@siglo21.example",role:"Cocina",active:true,locked:false,mesa:null},
+ {id:6,user:"cocina2",name:"Pedro Díaz",email:"pdiaz@siglo21.example",role:"Cocina",active:false,locked:false,mesa:null}];
+var PASS={};USERS.forEach(function(u){PASS[u.user]="Demo2026!"});
+var MESAS=[{n:1,c:2},{n:2,c:4},{n:3,c:4},{n:4,c:6},{n:5,c:4},{n:7,c:2},{n:9,c:8}];
+var NOW=Date.now();
+var ORD=[
+ {id:101,mesa:4,t:NOW-18*60000,st:"nuevo",it:[["pastel",2],["jugo",1]]},
+ {id:102,mesa:7,t:NOW-12*60000,st:"prep",it:[["cazuela",1],["pastel",1]]},
+ {id:103,mesa:2,t:NOW-9*60000,st:"nuevo",it:[["empanadas",3],["ensalada",1]]},
+ {id:104,mesa:9,t:NOW-5*60000,st:"nuevo",it:[["lomo",1],["bebida",2]]},
+ {id:105,mesa:5,t:NOW-2*60000,st:"nuevo",it:[["humitas",2],["pastel",1]]},
+ {id:100,mesa:3,t:NOW-26*60000,st:"listo",it:[["porotos",2]]}];
+var NEXT=106;
+var MOV=[];(function(){var d=new Date(),dm=d.getDate();for(var i=1;i<=dm;i++){var ds=i*7%5;MOV.push({d:i,k:"Ingreso",c:"Ventas del día (caja)",m:380000+ds*45000+i*3000});if(i%2===0)MOV.push({d:i,k:"Egreso",c:"Compra a proveedores",m:110000+ds*20000});if(i===1)MOV.push({d:1,k:"Egreso",c:"Sueldos del mes",m:1450000})}})();
+var PO=[];var LOG=[];var CART={};
+var S={user:null,view:null,lang:"es",cat:"todos",modal:null,toast:"",loginErr:"",fails:{},ue:null,idle:false,pro:{}};
+var TODAY=new Date().getDate();
+function $(i){return document.getElementById(i)}
+function esc(t){return String(t==null?"":t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function money(n){return "$"+Math.round(n).toLocaleString("es-CL")}
+function dish(id){return DISH.filter(function(d){return d.id===id})[0]}
+function ins(id){return INS.filter(function(d){return d.id===id})[0]}
+function hhmm(t){var d=new Date(t);return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
+function log(a){LOG.unshift({t:Date.now(),u:S.user?S.user.user:"—",a:a})}
+function toast(m){S.toast=m;paint();clearTimeout(toast.t);toast.t=setTimeout(function(){S.toast="";paint()},2600)}
+/* ===== Textos del cliente (ES/EN) ===== */
+var T={es:{add:"Agregar",order:"Tu pedido",empty:"Aún no agregas platos.",total:"Total",send:"Enviar pedido a cocina",call:"Llamar al garzón",sent:"Pedido enviado a cocina.",called:"Avisamos al garzón. Ya viene.",menu:"Carta",table:"Mesa"},
+ en:{add:"Add",order:"Your order",empty:"You haven't added any dishes yet.",total:"Total",send:"Send order to the kitchen",call:"Call the waiter",sent:"Order sent to the kitchen.",called:"We told the waiter. He is on the way.",menu:"Menu",table:"Table"}};
+/* ===== Vistas ===== */
+function vLogin(){
+ return '<div class="top"><span class="logo" aria-hidden="true">XXI</span><div class="brand">Restaurante Siglo XXI<small>Comida casera desde hace 50 años</small></div>'+tools()+'</div>'+
+ '<div class="login"><h2>Ingreso al sistema</h2>'+(S.idle?'<div class="pill warn" role="status">Su sesión se cerró por inactividad.</div>':"")+
+ '<div class="fld"><label for="u">Usuario</label><input type="text" id="u" autocomplete="username" placeholder="Ej.: cocina"></div>'+
+ '<div class="fld"><label for="pw">Contraseña</label><input type="password" id="pw" autocomplete="current-password"></div>'+
+ '<label class="chk"><input type="checkbox" data-act="showpw"> Mostrar contraseña</label>'+
+ '<div class="err" id="lerr" role="alert">'+esc(S.loginErr)+'</div>'+
+ '<button class="btn" data-act="login">Ingresar</button>'+
+ '<details><summary>¿Necesita ayuda para ingresar?</summary><p class="hint" style="margin-top:6px">Escriba su usuario y contraseña. Tras 3 intentos fallidos la cuenta se bloquea y debe pedir al administrador que la desbloquee. Soporte: soporte@siglo21.example (ejemplo).</p></details>'+
+ '<div><p class="ex">Cuentas de ejemplo (clave Demo2026!):</p><div class="demo" style="margin-top:6px">'+[["admin","Administrador"],["cliente.mesa5","Cliente"],["bodega","Bodega"],["finanzas","Finanzas"],["cocina","Cocina"]].map(function(x){return '<button data-act="demo" data-v="'+x[0]+'">'+x[1]+"</button>"}).join("")+"</div></div></div>";
+}
+function tools(){
+ return '<div class="tools" role="group" aria-label="Accesibilidad"><button class="tb" data-act="fs" data-v="-1" aria-label="Reducir tamaño del texto">A−</button><button class="tb" data-act="fs" data-v="1" aria-label="Aumentar tamaño del texto">A+</button><button class="tb" data-act="contrast" aria-pressed="'+(document.documentElement.getAttribute("data-contrast")==="alto")+'">Alto contraste</button></div>';
+}
+function shell(inner){
+ var u=S.user,nav=NAV[u.role];
+ return '<div class="top"><span class="logo" aria-hidden="true">XXI</span><div class="brand">Restaurante Siglo XXI<small>Panel de '+esc(u.role)+'</small></div>'+tools()+(u.role==="Cliente"?'<button class="tb" data-act="lang">'+(S.lang==="es"?"English":"Español")+"</button>":"")+'<button class="tb" data-act="nav" data-v="ayuda">Ayuda</button><div class="who"><b>'+esc(u.name)+"</b>"+esc(u.role)+'</div><button class="tb" data-act="logout">Cerrar sesión</button></div>'+
+ '<nav class="tabs" aria-label="Menú del rol">'+nav.map(function(n){return '<button class="tab" data-act="nav" data-v="'+n[0]+'"'+(S.view===n[0]?' aria-current="page"':"")+">"+n[1]+"</button>"}).join("")+'</nav><main class="main">'+inner+"</main>";
+}
+/* Cliente */
+function cartTotal(){return Object.keys(CART).reduce(function(s,k){return s+dish(k).p*CART[k]},0)}
+function vCarta(){
+ var L=T[S.lang],en=S.lang==="en";
+ var h='<div class="hd"><div><h2>'+L.menu+" · "+L.table+" "+S.user.mesa+'</h2><p>'+(en?"Home-style food, 50 years of tradition.":"Comida casera con 50 años de tradición.")+'</p></div><button class="btn sec" data-act="call">'+L.call+"</button></div>";
+ h+='<div class="cats" role="group" aria-label="Categorías">'+CATS.map(function(c){return '<button class="tab" data-act="cat" data-v="'+c[0]+'"'+(S.cat===c[0]?' aria-current="page"':"")+">"+(en?c[2]:c[1])+"</button>"}).join("")+"</div>";
+ h+='<div class="two"><div class="grid">'+DISH.filter(function(d){return S.cat==="todos"||d.cat===S.cat}).map(function(d){return '<div class="dish"><h3>'+esc(en?d.en:d.es)+'</h3><p class="hint">'+esc(en?d.dn:d.de)+'</p><div class="row" style="justify-content:space-between"><span class="price">'+money(d.p)+'</span><button class="btn sm" data-act="addd" data-v="'+d.id+'">+ '+L.add+"</button></div></div>"}).join("")+"</div>";
+ var ks=Object.keys(CART);
+ h+='<aside class="card" aria-label="'+L.order+'"><h3>'+L.order+"</h3>"+(ks.length?ks.map(function(k){var d=dish(k);return '<div class="row" style="justify-content:space-between"><span>'+esc(en?d.en:d.es)+'</span><span class="qty"><button data-act="dec" data-v="'+k+'" aria-label="Quitar uno">−</button><span>'+CART[k]+'</span><button data-act="inc" data-v="'+k+'" aria-label="Agregar uno">+</button></span></div>'}).join("")+'<hr style="width:100%;border:0;border-top:2px solid var(--line)"><div class="row" style="justify-content:space-between"><b>'+L.total+'</b><span class="price">'+money(cartTotal())+'</span></div><button class="btn" data-act="sendord">'+L.send+"</button>":'<p class="hint">'+L.empty+"</p>")+"</aside></div>";
+ return h+'<p class="ex">Platos y precios de ejemplo.</p>';
+}
+var ST={nuevo:["Recibido","warn"],prep:["En preparación","warn"],listo:["¡Listo! El garzón lo lleva","ok"],entregado:["Entregado","off"]};
+function vMiPedido(){
+ var L=ORD.filter(function(o){return o.mesa===S.user.mesa&&o.st!=="entregado"});
+ var h='<div class="hd"><div><h2>Mi pedido</h2><p>Estado de lo que pediste en la mesa '+S.user.mesa+".</p></div></div>";
+ if(!L.length)return h+'<div class="card"><p>No hay pedidos activos. Elige platos en «Carta y pedido».</p></div>';
+ return h+L.map(function(o){var s=ST[o.st];return '<div class="card"><div class="row" style="justify-content:space-between"><b>Pedido N° '+o.id+" · "+hhmm(o.t)+'</b><span class="pill '+s[1]+'">'+s[0]+"</span></div>"+o.it.map(function(i){return "<div>"+i[1]+"× "+esc(dish(i[0]).es)+"</div>"}).join("")+"</div>"}).join("");
+}
+/* Cocina */
+function kOrders(){return ORD.filter(function(o){return o.st==="nuevo"||o.st==="prep"}).map(function(o){var items=o.it.filter(function(i){return dish(i[0]).cat!=="beb"});return{o:o,it:items,w:Math.floor((Date.now()-o.t)/60000),est:Math.max.apply(null,[0].concat(items.map(function(i){return dish(i[0]).t})))}}).filter(function(x){return x.it.length}).sort(function(a,b){var la=a.w>=15?0:1,lb=b.w>=15?0:1;return la-lb||a.o.t-b.o.t})}
+function vTablero(){
+ var Q=kOrders(),G={};Q.forEach(function(x){x.it.forEach(function(i){G[i[0]]=(G[i[0]]||0)+i[1]})});
+ var R=ORD.filter(function(o){return o.st==="listo"});
+ var h='<div class="hd"><div><h2>Tablero de órdenes</h2><p>Orden de preparación: primero los pedidos con 15 minutos o más de espera y luego por hora de llegada.</p></div></div><div class="two"><div style="display:flex;flex-direction:column;gap:12px">';
+ h+=Q.length?Q.map(function(x,i){var late=x.w>=15;return '<div class="card ord'+(late?" late":"")+'"><div class="row" style="justify-content:space-between"><span><span class="num">'+(i+1)+'</span> <b>Mesa '+x.o.mesa+'</b> · Pedido N° '+x.o.id+'</span><span class="pill '+(late?"bad":"warn")+'">'+x.w+' min de espera</span></div>'+x.it.map(function(it){return '<div class="big" style="font-size:1.3rem">'+it[1]+"× "+esc(dish(it[0]).es)+"</div>"}).join("")+'<div class="row" style="justify-content:space-between"><span class="hint">Llegó '+hhmm(x.o.t)+" · tiempo estimado "+x.est+' min</span>'+(x.o.st==="nuevo"?'<button class="btn sm" data-act="kprep" data-v="'+x.o.id+'">Empezar</button>':'<button class="btn sm" data-act="klisto" data-v="'+x.o.id+'">Marcar listo</button>')+"</div></div>"}).join(""):'<div class="card"><p>No hay órdenes pendientes.</p></div>';
+ h+='</div><div style="display:flex;flex-direction:column;gap:12px"><div class="card"><h3>Preparar juntos</h3><p class="hint">Platos iguales de distintos pedidos, para ahorrar tiempo.</p>'+(Object.keys(G).length?Object.keys(G).map(function(k){return '<div class="row" style="justify-content:space-between"><span>'+esc(dish(k).es)+'</span><b>'+G[k]+"</b></div>"}).join(""):'<p class="hint">Nada por preparar.</p>')+'</div><div class="card"><h3>Listos para entregar</h3><p class="hint">Aviso para el garzón.</p>'+(R.length?R.map(function(o){return '<div class="row" style="justify-content:space-between"><b>Mesa '+o.mesa+" · N° "+o.id+'</b><button class="btn sm" data-act="kent" data-v="'+o.id+'">Entregado</button></div>'}).join(""):'<p class="hint">Ninguno por ahora.</p>')+"</div></div></div>";
+ return h+'<p class="ex">Pedidos de ejemplo. Los pedidos que envíe el cliente aparecen aquí.</p>';
+}
+/* Bodega */
+function stTag(i){return i.s<i.m?'<span class="pill bad">Bajo mínimo</span>':'<span class="pill ok">Normal</span>'}
+function vStock(){
+ var h='<div class="hd"><div><h2>Control de stock</h2><p>Ingreso de productos y existencias.</p></div></div>';
+ h+='<div class="card"><h3>Ingresar producto</h3><div class="row"><div class="fld"><label for="i-ins">Insumo</label><select id="i-ins">'+INS.map(function(i){return '<option value="'+i.id+'">'+esc(i.n)+" ("+i.u+")</option>"}).join("")+'</select></div><div class="fld"><label for="i-q">Cantidad que ingresa</label><input type="number" id="i-q" min="1" step="1" placeholder="Ej.: 10"></div><button class="btn" data-act="ingreso">Ingresar</button></div><div class="err" id="ierr" role="alert"></div></div>';
+ h+='<div class="tw"><table><thead><tr><th>Insumo</th><th class="r">Stock</th><th class="r">Mínimo</th><th>Estado</th><th>Proveedor</th></tr></thead><tbody>'+INS.map(function(i){return "<tr><td>"+esc(i.n)+'</td><td class="r">'+i.s+" "+i.u+'</td><td class="r">'+i.m+" "+i.u+"</td><td>"+stTag(i)+"</td><td>"+esc(i.pr)+"</td></tr>"}).join("")+"</tbody></table></div>";
+ return h+'<p class="ex">Datos de ejemplo.</p>';
+}
+function vRecetas(){
+ return '<div class="hd"><div><h2>Recetas</h2><p>Insumos que usa cada plato por porción.</p></div></div><div class="grid">'+Object.keys(REC).map(function(k){return '<div class="card"><h3>'+esc(dish(k).es)+"</h3>"+REC[k].map(function(r){var i=ins(r[0]);return '<div class="row" style="justify-content:space-between"><span>'+esc(i.n)+"</span><span>"+r[1]+" "+i.u+"</span></div>"}).join("")+"</div>"}).join("")+'</div><p class="ex">Cantidades de ejemplo.</p>';
+}
+function need(){return INS.filter(function(i){return i.s<i.m}).map(function(i){return{i:i,q:Math.ceil(i.m*2-i.s)}})}
+function vPedido(){
+ var N=need();
+ var h='<div class="hd"><div><h2>Pedido a proveedores</h2><p>El sistema calcula lo que falta: lleva cada insumo bajo el mínimo hasta el doble del mínimo.</p></div></div>';
+ h+=N.length?'<div class="tw"><table><thead><tr><th>Insumo</th><th class="r">Stock</th><th class="r">Mínimo</th><th class="r">A pedir</th><th>Proveedor</th></tr></thead><tbody>'+N.map(function(x){return "<tr><td>"+esc(x.i.n)+'</td><td class="r">'+x.i.s+'</td><td class="r">'+x.i.m+'</td><td class="r"><b>'+x.q+" "+x.i.u+"</b></td><td>"+esc(x.i.pr)+"</td></tr>"}).join("")+'</tbody></table></div><div><button class="btn" data-act="genpo">Generar pedido a proveedores</button></div>':'<div class="card"><p>No hay insumos bajo el mínimo.</p></div>';
+ h+='<h3>Pedidos generados</h3>'+(PO.length?PO.map(function(p){return '<div class="card"><b>Pedido '+p.id+" · "+p.f+" · "+esc(p.u)+"</b>"+p.l.map(function(l){return "<div>"+l.q+" "+l.un+" de "+esc(l.n)+' <span class="hint">('+esc(l.pr)+")</span></div>"}).join("")+"</div>"}).join(""):'<p class="hint">Aún no se genera ningún pedido.</p>');
+ return h;
+}
+/* Finanzas */
+function sums(){var r={hi:0,he:0,mi:0,me:0};MOV.forEach(function(m){var v=m.k==="Ingreso"?"i":"e";r["m"+v]+=m.m;if(m.d===TODAY)r["h"+v]+=m.m});return r}
+function vCaja(){
+ var s=sums();
+ var h='<div class="hd"><div><h2>Caja y utilidad</h2><p>Ingresos y egresos de dinero.</p></div></div><div class="grid3">'+[["Hoy",s.hi,s.he],["Mes",s.mi,s.me]].map(function(x){return '<div class="card"><b>'+x[0]+'</b><div class="row" style="justify-content:space-between"><span>Ingresos</span><span>'+money(x[1])+'</span></div><div class="row" style="justify-content:space-between"><span>Egresos</span><span>'+money(x[2])+'</span></div><div class="row" style="justify-content:space-between"><b>Utilidad</b><span class="price" style="color:'+(x[1]-x[2]>=0?"var(--ok)":"var(--bad)")+'">'+money(x[1]-x[2])+"</span></div></div>"}).join("")+"</div>";
+ h+='<div class="card"><h3>Registrar movimiento</h3><div class="row"><div class="fld"><label for="m-k">Tipo</label><select id="m-k"><option>Ingreso</option><option>Egreso</option></select></div><div class="fld"><label for="m-c">Concepto</label><input type="text" id="m-c" placeholder="Ej.: Venta con tarjeta"></div><div class="fld"><label for="m-m">Monto (CLP)</label><input type="number" id="m-m" min="1" placeholder="Ej.: 25000"></div><button class="btn" data-act="mov">Registrar</button></div><div class="err" id="merr" role="alert"></div></div>';
+ h+='<div class="tw"><table><thead><tr><th>Día</th><th>Tipo</th><th>Concepto</th><th class="r">Monto</th></tr></thead><tbody>'+MOV.slice().reverse().slice(0,8).map(function(m){return "<tr><td>"+m.d+'</td><td><span class="pill '+(m.k==="Ingreso"?"ok":"bad")+'">'+m.k+"</span></td><td>"+esc(m.c)+'</td><td class="r">'+money(m.m)+"</td></tr>"}).join("")+"</tbody></table></div>";
+ return h+'<p class="ex">Montos de ejemplo. Se muestran los últimos 8 movimientos.</p>';
+}
+/* Administrador */
+function vResumen(){
+ var s=sums(),act=ORD.filter(function(o){return o.st==="nuevo"||o.st==="prep"}).length;
+ return '<div class="hd"><div><h2>Resumen del negocio</h2><p>Estado del restaurante en un vistazo.</p></div></div><div class="grid3">'+[["Pedidos en cocina",act,"nav","tablero"],["Ventas de hoy",money(s.hi),"",""],["Utilidad del mes",money(s.mi-s.me),"",""],["Insumos bajo el mínimo",need().length,"nav","pedido"],["Usuarios activos",USERS.filter(function(u){return u.active}).length,"nav","usuarios"],["Mesas",MESAS.length,"nav","recursos"]].map(function(c){return '<div class="card"><span class="hint">'+c[0]+'</span><div class="big">'+c[1]+"</div></div>"}).join("")+'</div><p class="ex">Datos de ejemplo.</p>';
+}
+function vUsuarios(){
+ if(S.ue)return vUForm();
+ var h='<div class="hd"><div><h2>Usuarios y perfiles</h2><p>Crear, mantener y eliminar usuarios con su perfil.</p></div><button class="btn" data-act="newu">+ Nuevo usuario</button></div>';
+ h+='<div class="tw"><table><thead><tr><th>Nombre</th><th>Usuario</th><th>Perfil</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>'+USERS.map(function(u){return "<tr><td>"+esc(u.name)+"</td><td>"+esc(u.user)+"</td><td>"+u.role+"</td><td>"+(u.locked?'<span class="pill bad">Bloqueado</span>':u.active?'<span class="pill ok">Activo</span>':'<span class="pill off">Inactivo</span>')+'</td><td><div class="row"><button class="btn sec sm" data-act="editu" data-v="'+u.id+'">Editar</button>'+(u.locked?'<button class="btn sec sm" data-act="unlock" data-v="'+u.id+'">Desbloquear</button>':"")+'<button class="btn danger sm" data-act="delu" data-v="'+u.id+'">Eliminar</button></div></td></tr>'}).join("")+"</tbody></table></div>";
+ return h+'<p class="ex">Usuarios de ejemplo.</p>';
+}
+function vUForm(){
+ var u=S.ue,E=u.err||{},isNew=!u.id;
+ function f(k,l,type,ph){return '<div class="fld"><label for="f-'+k+'">'+l+'</label><input type="'+type+'" id="f-'+k+'" data-uf="'+k+'" placeholder="'+ph+'" value="'+esc(u[k])+'"'+(E[k]?' class="inv"':"")+(k==="user"&&!isNew?" disabled":"")+'>'+(E[k]?'<span class="err">'+E[k]+"</span>":"")+"</div>"}
+ var h='<div class="hd"><div><h2>'+(isNew?"Nuevo usuario":"Editar usuario")+'</h2><p>Los campos con * son obligatorios.</p></div></div><div class="card"><div class="grid">'+f("name","Nombre *","text","Ej.: Ana Rojas")+f("user","Usuario *","text","Ej.: arojas")+f("email","Correo *","email","nombre@siglo21.example");
+ h+='<div class="fld"><label for="f-role">Perfil *</label><select id="f-role" data-uf="role"'+(E.role?' class="inv"':"")+'><option value="">Seleccione un perfil</option>'+ROLES.map(function(r){return "<option"+(u.role===r?" selected":"")+">"+r+"</option>"}).join("")+"</select>"+(E.role?'<span class="err">'+E.role+"</span>":"")+"</div>";
+ if(u.role==="Cliente")h+='<div class="fld"><label for="f-mesa">Mesa *</label><select id="f-mesa" data-uf="mesa"><option value="">Seleccione</option>'+MESAS.map(function(m){return '<option value="'+m.n+'"'+(String(u.mesa)===String(m.n)?" selected":"")+">Mesa "+m.n+"</option>"}).join("")+"</select>"+(E.mesa?'<span class="err">'+E.mesa+"</span>":"")+"</div>";
+ if(isNew)h+='<div class="fld"><label for="f-pw">Contraseña temporal *</label><input type="password" id="f-pw" data-uf="pw" autocomplete="new-password" value="'+esc(u.pw)+'"'+(E.pw?' class="inv"':"")+">"+(E.pw?'<span class="err">'+E.pw+"</span>":"")+'<ul class="rules" id="rules"><li data-r="len">Mínimo 8 caracteres</li><li data-r="up">Una mayúscula</li><li data-r="num">Un número</li></ul></div>';
+ h+='</div><label class="chk"><input type="checkbox" data-uf="active"'+(u.active?" checked":"")+'> Usuario activo</label><div class="row"><button class="btn" data-act="saveu">'+(isNew?"Crear usuario":"Guardar cambios")+'</button><button class="btn sec" data-act="cancelu">Cancelar</button>'+(isNew?"":'<button class="btn danger" data-act="resetpw">Restablecer contraseña</button>')+"</div></div>";
+ return h;
+}
+function vRecursos(){
+ return '<div class="hd"><div><h2>Productos y mesas</h2><p>Recursos que usa el sistema.</p></div></div><div class="two"><div><h3 style="margin-bottom:8px">Productos de la carta</h3><div class="tw"><table><thead><tr><th>Producto</th><th>Categoría</th><th class="r">Precio</th></tr></thead><tbody>'+DISH.map(function(d){return "<tr><td>"+esc(d.es)+"</td><td>"+d.cat+'</td><td class="r">'+money(d.p)+"</td></tr>"}).join("")+'</tbody></table></div><div class="card" style="margin-top:12px"><h3>Agregar producto</h3><div class="row"><div class="fld"><label for="p-n">Nombre</label><input type="text" id="p-n"></div><div class="fld"><label for="p-c">Categoría</label><select id="p-c"><option value="entrada">Entrada</option><option value="fondo">Plato de fondo</option><option value="postre">Postre</option><option value="beb">Bebida</option></select></div><div class="fld"><label for="p-p">Precio</label><input type="number" id="p-p" min="1"></div><button class="btn" data-act="addp">Agregar</button></div><div class="err" id="perr" role="alert"></div></div></div>'+
+ '<div><h3 style="margin-bottom:8px">Mesas</h3><div class="tw"><table><thead><tr><th>Mesa</th><th class="r">Capacidad</th></tr></thead><tbody>'+MESAS.map(function(m){return "<tr><td>Mesa "+m.n+'</td><td class="r">'+m.c+" personas</td></tr>"}).join("")+'</tbody></table></div><div class="card" style="margin-top:12px"><h3>Agregar mesa</h3><div class="row"><div class="fld"><label for="t-n">Número</label><input type="number" id="t-n" min="1"></div><div class="fld"><label for="t-c">Capacidad</label><input type="number" id="t-c" min="1"></div><button class="btn" data-act="addt">Agregar</button></div><div class="err" id="terr" role="alert"></div></div></div></div>';
+}
+function vActividad(){
+ return '<div class="hd"><div><h2>Registro de actividad</h2><p>Ingresos al sistema y cambios en usuarios, para control de seguridad.</p></div></div>'+(LOG.length?'<div class="tw"><table><thead><tr><th>Hora</th><th>Usuario</th><th>Acción</th></tr></thead><tbody>'+LOG.slice(0,15).map(function(l){return "<tr><td>"+hhmm(l.t)+"</td><td>"+esc(l.u)+"</td><td>"+esc(l.a)+"</td></tr>"}).join("")+"</tbody></table></div>":'<div class="card"><p>Aún no hay actividad registrada.</p></div>');
+}
+/* Ayuda */
+var HELP={Administrador:[["¿Cómo creo un usuario?","Vaya a «Usuarios», presione «Nuevo usuario», complete los datos y elija su perfil."],["¿Cómo elimino un usuario?","Use «Eliminar» y confirme. No puede eliminar su propia cuenta."],["¿Qué hago si una cuenta se bloquea?","En «Usuarios» presione «Desbloquear»."]],
+ Cliente:[["¿Cómo hago mi pedido?","Agregue platos con «Agregar» y presione «Enviar pedido a cocina»."],["¿Puedo cambiar el idioma?","Sí, con el botón English / Español de la parte superior."],["¿Y si necesito al garzón?","Use el botón «Llamar al garzón»."]],
+ Bodega:[["¿Cómo ingreso mercadería?","En «Stock», elija el insumo, escriba la cantidad y presione «Ingresar»."],["¿Cómo se calcula el pedido a proveedores?","Con los insumos bajo el mínimo: se pide hasta llegar al doble del mínimo."]],
+ Finanzas:[["¿Cómo registro dinero?","En «Caja y utilidad», elija Ingreso o Egreso, escriba el concepto y el monto."],["¿Cómo se calcula la utilidad?","Ingresos menos egresos, del día y del mes."]],
+ Cocina:[["¿En qué orden aparecen los pedidos?","Primero los que llevan 15 minutos o más de espera y luego por hora de llegada."],["¿Cómo aviso que un plato está listo?","Presione «Empezar» y luego «Marcar listo»; el garzón verá el aviso."]]};
+function vAyuda(){
+ var r=S.user.role;
+ return '<div class="hd"><div><h2>Ayuda y soporte</h2><p>Guía rápida para el perfil '+r+'.</p></div></div>'+HELP[r].map(function(t,i){return "<details"+(i===0?" open":"")+"><summary>"+esc(t[0])+"</summary><p style='margin-top:6px'>"+esc(t[1])+"</p></details>"}).join("")+
+ '<details><summary>Accesibilidad</summary><p style="margin-top:6px">Use A− y A+ para el tamaño del texto y «Alto contraste» para ver mejor. Todos los botones tienen texto y son grandes.</p></details><details><summary>Seguridad de la cuenta</summary><p style="margin-top:6px">No comparta su contraseña. Cierre la sesión al terminar; el sistema la cierra solo tras 10 minutos sin uso.</p></details><div class="card"><h3>Contacto de soporte</h3><p>Correo: soporte@siglo21.example</p><p>Teléfono: anexo 100 (datos de ejemplo)</p></div>';
+}
+function view(){
+ if(!S.user)return vLogin();
+ var m={resumen:vResumen,usuarios:vUsuarios,recursos:vRecursos,pedido:vPedido,actividad:vActividad,ayuda:vAyuda,carta:vCarta,mipedido:vMiPedido,stock:vStock,recetas:vRecetas,caja:vCaja,tablero:vTablero};
+ return shell(m[S.view]());
+}
+function paint(){
+ $("app").innerHTML=view();
+ var md=S.modal;
+ $("layer").innerHTML=(md?'<div class="modal"><div role="dialog" aria-label="Confirmar"><h3>¿Eliminar usuario?</h3><p>Se eliminará a <b>'+esc(md.name)+'</b> ('+md.role+"). Esta acción no se puede deshacer.</p><div class=\"row\"><button class=\"btn danger\" data-act=\"confdel\">Sí, eliminar</button><button class=\"btn sec\" data-act=\"cancelmodal\">Cancelar</button></div></div></div>":"")+(S.toast?'<div class="toast" role="status">'+esc(S.toast)+"</div>":"");
+ if(S.user&&S.view==="usuarios"&&S.ue&&!S.ue.id)rules();
+}
+function rules(){var p=($("f-pw")||{}).value||"",ok={len:p.length>=8,up:/[A-Z]/.test(p),num:/\d/.test(p)};document.querySelectorAll("#rules li").forEach(function(li){li.className=ok[li.getAttribute("data-r")]?"ok":""})}
+/* ===== Seguridad: cierre por inactividad ===== */
+var idleT;function resetIdle(){clearTimeout(idleT);if(S.user)idleT=setTimeout(function(){log("Sesión cerrada por inactividad");S.user=null;S.view=null;S.idle=true;paint()},600000)}
+["click","keydown"].forEach(function(e){document.addEventListener(e,resetIdle)});
+/* ===== Lógica ===== */
+function validU(){
+ var u=S.ue,E={};
+ if(u.name.trim().length<3)E.name="Ingrese el nombre.";
+ if(!u.id){if(!/^[a-z0-9._]{4,20}$/.test(u.user))E.user="De 4 a 20 caracteres: minúsculas, números, punto o guion bajo.";else if(USERS.some(function(x){return x.user===u.user}))E.user="Ese usuario ya existe.";
+  if(u.pw.length<8||!/[A-Z]/.test(u.pw)||!/\d/.test(u.pw))E.pw="La contraseña no cumple los requisitos."}
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(u.email))E.email="Ingrese un correo válido.";
+ if(!u.role)E.role="Seleccione un perfil.";
+ if(u.role==="Cliente"&&!u.mesa)E.mesa="Seleccione la mesa.";
+ u.err=E;return !Object.keys(E).length;
+}
+document.addEventListener("input",function(e){
+ var t=e.target,f=t.getAttribute&&t.getAttribute("data-uf");if(!f)return;
+ var u=S.ue;u[f]=t.type==="checkbox"?t.checked:t.value;
+ if(u.err&&u.err[f]){delete u.err[f];var n=t.nextElementSibling;if(n&&n.classList.contains("err"))n.remove();t.classList.remove("inv")}
+ if(f==="role"){if(u.role!=="Cliente")u.mesa=null;paint()}
+ if(f==="pw")rules();
+});
+document.addEventListener("click",function(e){
+ var t=e.target.closest("[data-act]");if(!t)return;
+ var a=t.getAttribute("data-act"),v=t.getAttribute("data-v");
+ if(a==="fs"){var cur=parseInt(getComputedStyle(document.documentElement).fontSize,10),n=Math.max(14,Math.min(24,cur+Number(v)*3));document.documentElement.style.setProperty("--fs",n+"px");return}
+ if(a==="contrast"){var r=document.documentElement;if(r.getAttribute("data-contrast")==="alto")r.removeAttribute("data-contrast");else r.setAttribute("data-contrast","alto");paint();return}
+ if(a==="showpw"){$("pw").type=t.checked?"text":"password";return}
+ if(a==="demo"){$("u").value=v;$("pw").value="Demo2026!";S.loginErr="";$("lerr").textContent="";return}
+ if(a==="login"){
+  var un=$("u").value.trim().toLowerCase(),pw=$("pw").value,u=USERS.filter(function(x){return x.user===un})[0];
+  function er(m){S.loginErr=m;$("lerr").textContent=m}
+  if(!un||!pw){er("Ingrese su usuario y contraseña.");return}
+  if(u&&u.locked){er("Cuenta bloqueada por intentos fallidos. Pida al administrador que la desbloquee.");return}
+  if(!u||PASS[un]!==pw){if(u){S.fails[un]=(S.fails[un]||0)+1;if(S.fails[un]>=3){u.locked=true;log("Cuenta "+un+" bloqueada por intentos fallidos");er("Cuenta bloqueada por intentos fallidos. Pida al administrador que la desbloquee.");return}er("Usuario o contraseña incorrectos. Intento "+S.fails[un]+" de 3.")}else er("Usuario o contraseña incorrectos.");return}
+  if(!u.active){er("Este usuario está inactivo. Contacte al administrador.");return}
+  S.user=u;S.fails[un]=0;S.loginErr="";S.idle=false;S.view=NAV[u.role][0][0];S.ue=null;log("Ingreso al sistema");resetIdle();paint();window.scrollTo(0,0);return}
+ if(a==="logout"){log("Cierre de sesión");S.user=null;S.view=null;S.ue=null;S.idle=false;paint();return}
+ if(a==="nav"){S.view=v;S.ue=null;paint();return}
+ if(a==="lang"){S.lang=S.lang==="es"?"en":"es";paint();return}
+ if(a==="cat"){S.cat=v;paint();return}
+ if(a==="addd"||a==="inc"){CART[v]=(CART[v]||0)+1;paint();return}
+ if(a==="dec"){CART[v]=(CART[v]||1)-1;if(CART[v]<=0)delete CART[v];paint();return}
+ if(a==="call"){toast(T[S.lang].called);return}
+ if(a==="sendord"){var it=Object.keys(CART).map(function(k){return[k,CART[k]]});ORD.push({id:NEXT++,mesa:S.user.mesa,t:Date.now(),st:"nuevo",it:it});CART={};S.view="mipedido";toast(T[S.lang].sent);return}
+ if(a==="kprep"||a==="klisto"||a==="kent"){var o=ORD.filter(function(x){return x.id===+v})[0];o.st=a==="kprep"?"prep":a==="klisto"?"listo":"entregado";paint();return}
+ if(a==="ingreso"){var q=Number($("i-q").value);if(!(q>0)){$("ierr").textContent="Ingrese una cantidad mayor que cero.";return}ins($("i-ins").value).s+=q;toast("Producto ingresado al stock.");return}
+ if(a==="genpo"){var N=need();PO.unshift({id:"P-"+(PO.length+1),f:new Date().toLocaleDateString("es-CL"),u:S.user.user,l:N.map(function(x){return{q:x.q,un:x.i.u,n:x.i.n,pr:x.i.pr}})});log("Generó pedido a proveedores");toast("Pedido a proveedores generado.");return}
+ if(a==="mov"){var c=$("m-c").value.trim(),m=Number($("m-m").value);if(!c||!(m>0)){$("merr").textContent="Ingrese el concepto y un monto mayor que cero.";return}MOV.push({d:TODAY,k:$("m-k").value,c:c,m:m});toast("Movimiento registrado.");return}
+ if(a==="addp"){var n=$("p-n").value.trim(),p=Number($("p-p").value);if(n.length<3||!(p>0)){$("perr").textContent="Ingrese el nombre y un precio mayor que cero.";return}DISH.push({id:"x"+DISH.length,cat:$("p-c").value,es:n,en:n,de:"Producto nuevo.",dn:"New product.",p:p,t:5});log("Agregó producto "+n);toast("Producto agregado.");return}
+ if(a==="addt"){var nn=Number($("t-n").value),cc=Number($("t-c").value);if(!(nn>0)||!(cc>0)){$("terr").textContent="Ingrese el número y la capacidad.";return}if(MESAS.some(function(m){return m.n===nn})){$("terr").textContent="Esa mesa ya existe.";return}MESAS.push({n:nn,c:cc});log("Agregó mesa "+nn);toast("Mesa agregada.");return}
+ if(a==="newu"){S.ue={name:"",user:"",email:"",role:"",mesa:null,pw:"",active:true,err:{}};paint();return}
+ if(a==="editu"){var x=USERS.filter(function(z){return z.id===+v})[0];S.ue=Object.assign({pw:"",err:{}},x);paint();return}
+ if(a==="cancelu"){S.ue=null;paint();return}
+ if(a==="resetpw"){log("Restableció contraseña de "+S.ue.user);toast("Se enviaría una contraseña temporal al correo (simulado).");return}
+ if(a==="saveu"){
+  if(!validU()){paint();var fe=document.querySelector(".inv");if(fe)fe.focus();return}
+  var u2=S.ue;
+  if(u2.id){var o2=USERS.filter(function(z){return z.id===u2.id})[0];["name","email","role","active","mesa"].forEach(function(k){o2[k]=u2[k]});log("Modificó al usuario "+o2.user);toast("Cambios guardados.")}
+  else{USERS.push({id:USERS.length+10,user:u2.user,name:u2.name.trim(),email:u2.email.trim(),role:u2.role,active:u2.active,locked:false,mesa:u2.role==="Cliente"?+u2.mesa:null});PASS[u2.user]=u2.pw;log("Creó al usuario "+u2.user);toast("Usuario creado correctamente.")}
+  S.ue=null;paint();return}
+ if(a==="unlock"){var y=USERS.filter(function(z){return z.id===+v})[0];y.locked=false;S.fails[y.user]=0;log("Desbloqueó a "+y.user);toast("Usuario desbloqueado.");return}
+ if(a==="delu"){var d=USERS.filter(function(z){return z.id===+v})[0];if(d.id===S.user.id){toast("No puede eliminar su propia cuenta.");return}S.modal=d;paint();return}
+ if(a==="cancelmodal"){S.modal=null;paint();return}
+ if(a==="confdel"){var dd=S.modal;USERS.splice(USERS.indexOf(dd),1);delete PASS[dd.user];log("Eliminó al usuario "+dd.user);S.modal=null;toast("Usuario eliminado.");return}
+});
+paint();
+})();
+</script>
+</body>
+</html>
