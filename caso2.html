@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>body{margin:0}</style>
+</head>
+<body>
+<title>Bike Orange Tour</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Concepto: app móvil dentro de un marco de teléfono; cinta de color del operador (white-label) sobre neutros fríos. */
+:root{
+  --bg:#E6EBEE; --surface:#FFFFFF; --surface2:#F1F4F6; --fg:#14232B; --muted:#52646E; --line:#D3DBE0;
+  --brand:#C94A00; --on-brand:#FFFFFF; --ok:#1E7A4F; --warn:#9A6200; --bad:#B3261E;
+  --map-land:#EAF0F2; --map-water:#BFD9E8; --map-park:#CFE5D3;
+  --font-body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-head:'Space Grotesk','Inter',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B1418; --surface:#16242B; --surface2:#1E2F37; --fg:#E8EEF1; --muted:#9BAEB8; --line:#2C414B;
+  --ok:#5CC48F; --warn:#E3B04A; --bad:#FF8A80;
+  --map-land:#1E2F37; --map-water:#1F4157; --map-park:#24473A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1418; --surface:#16242B; --surface2:#1E2F37; --fg:#E8EEF1; --muted:#9BAEB8; --line:#2C414B;
+  --ok:#5CC48F; --warn:#E3B04A; --bad:#FF8A80;
+  --map-land:#1E2F37; --map-water:#1F4157; --map-park:#24473A; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.45;
+  padding-block:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--font-head);margin:0;text-wrap:balance;line-height:1.15}
+p{margin:0}
+.stage{height:100%;display:flex;align-items:center;justify-content:center;padding-block:12px}
+.phone{--brandink:color-mix(in srgb,var(--brand) 62%,var(--fg));
+  width:100%;max-width:400px;height:100%;max-height:820px;background:var(--surface);border:1px solid var(--line);
+  border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 18px 50px rgba(8,20,28,.18)}
+@media (max-width:440px){.phone{border-radius:18px}}
+.top{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--brand);color:var(--on-brand)}
+.logo{width:30px;height:30px;border-radius:50%;border:3px solid var(--on-brand);display:grid;place-items:center;flex:none}
+.logo i{width:10px;height:10px;border-radius:50%;background:var(--on-brand)}
+.top .name{font-family:var(--font-head);font-weight:700;font-size:17px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .name small{display:block;font:500 11px var(--font-body);opacity:.9;letter-spacing:.04em;text-transform:uppercase}
+.iconbtn{background:rgba(255,255,255,.18);color:var(--on-brand);border:0;border-radius:10px;padding:7px 10px;cursor:pointer;font-size:13px;font-weight:600}
+.iconbtn:hover{background:rgba(255,255,255,.3)}
+main>*{flex-shrink:0}
+main{flex:1;overflow-y:auto;padding:16px 14px 20px;display:flex;flex-direction:column;gap:14px;min-height:0}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);background:var(--surface)}
+.tab{background:none;border:0;padding:9px 2px 11px;cursor:pointer;color:var(--muted);font-size:12px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tab[aria-current="page"]{color:var(--brandink);font-weight:600}
+:focus-visible{outline:3px solid var(--brandink);outline-offset:2px}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
+.route{display:flex;flex-direction:column;gap:8px;text-align:left;width:100%;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
+.route:hover{border-color:var(--brand)}
+.route h3{font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;background:var(--surface2);font-size:12px;font-weight:500;color:var(--fg);border:1px solid transparent}
+.chip.for{background:color-mix(in srgb,var(--brand) 16%,var(--surface));color:var(--brandink);font-weight:600}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.f{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 11px;font-size:13px;cursor:pointer}
+.f[aria-pressed="true"]{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
+.btn{background:var(--brand);color:var(--on-brand);border:0;border-radius:12px;padding:12px 16px;font-weight:600;cursor:pointer;width:100%;font-size:15px}
+.btn:hover{filter:brightness(1.08)}
+.btn.sec{background:var(--surface2);color:var(--fg);border:1px solid var(--line)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:8px}
+.row>*{flex:1;min-width:0}
+label,.lbl{font-size:13px;font-weight:600;display:block;margin-bottom:4px}
+input,select,textarea{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;min-height:42px}
+.err{color:var(--bad);font-size:13px;margin-top:3px}
+.field{display:flex;flex-direction:column}
+.hint{font-size:12.5px;color:var(--muted)}
+.bikes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.bike{border:1px solid var(--line);border-radius:12px;padding:8px 6px;text-align:center;cursor:pointer;background:var(--surface);font-size:13px}
+.bike b{display:block;font-size:13px}
+.bike[aria-pressed="true"]{border-color:var(--brand);box-shadow:inset 0 0 0 2px var(--brand)}
+.map{width:100%;height:auto;border-radius:12px;border:1px solid var(--line);display:block}
+.stoplist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.stoplist li{display:flex;gap:10px;align-items:flex-start}
+.num{width:24px;height:24px;border-radius:50%;background:var(--brand);color:var(--on-brand);font-size:12px;font-weight:700;display:grid;place-items:center;flex:none;margin-top:1px}
+.num.done{background:var(--ok)}
+.bar{height:8px;border-radius:99px;background:var(--surface2);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--brand);border-radius:99px;transition:width .3s}
+.opt{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;text-align:left;cursor:pointer;width:100%}
+.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--surface))}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--surface))}
+.pts{font-family:var(--font-head);font-size:38px;font-weight:700;color:var(--brandink)}
+.badges{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.badge{border:1px dashed var(--line);border-radius:12px;padding:10px;text-align:center;color:var(--muted)}
+.badge.on{border:1px solid var(--brand);color:var(--fg);background:color-mix(in srgb,var(--brand) 10%,var(--surface))}
+.badge svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.badge.on svg{stroke:var(--brandink)}
+.stars{display:flex;gap:6px}
+.star{background:none;border:0;font-size:30px;cursor:pointer;color:var(--line);padding:0;line-height:1}
+.star.on{color:#E0A100}
+.sheet{position:absolute;inset:0;background:rgba(8,20,28,.55);display:flex;align-items:flex-end;z-index:5}
+.sheet>div{background:var(--surface);width:100%;border-radius:18px 18px 0 0;padding:16px 14px 20px;display:flex;flex-direction:column;gap:10px;max-height:85%;overflow:auto}
+.op{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px;cursor:pointer;background:var(--surface);text-align:left;width:100%}
+.op[aria-pressed="true"]{border-color:var(--brand);box-shadow:inset 0 0 0 2px var(--brand)}
+.sw{width:28px;height:28px;border-radius:50%;flex:none}
+.phone-wrap{position:relative;display:contents}
+.pr{position:relative}
+.ok{color:var(--ok);font-weight:600}
+.code{font-family:var(--font-head);font-size:28px;font-weight:700;letter-spacing:.08em;color:var(--brandink)}
+.ex{font-size:11.5px;color:var(--muted);font-style:italic}
+.back{background:none;border:0;color:var(--brandink);font-weight:600;cursor:pointer;padding:0;text-align:left;width:auto}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="stage"><div class="phone pr" id="phone">
+  <header class="top">
+    <span class="logo" aria-hidden="true"><i></i></span>
+    <div class="name" id="opname"></div>
+    <button class="iconbtn" data-act="operators" aria-label="Cambiar operador turístico">Operador</button>
+  </header>
+  <main id="view" tabindex="-1"></main>
+  <nav class="tabs" id="tabs" aria-label="Secciones"></nav>
+  <div id="sheet"></div>
+</div></div>
+
+<script>
+(function(){
+"use strict";
+/* ===== Datos de ejemplo (distancias y precios referenciales) ===== */
+var OPERATORS=[
+ {id:"orange",name:"Bike Orange Tour",brand:"#C94A00",pickups:["Plaza Italia","Parque Forestal","Barrio Lastarria"]},
+ {id:"capital",name:"Ruta Capital",brand:"#1D5FD1",pickups:["Plaza de Armas","Estación Mapocho","Parque Bustamante"]},
+ {id:"verde",name:"Verde Urbano",brand:"#17745A",pickups:["Parque Bicentenario","Parque Araucano","Costanera Center"]}
+];
+var BIKES=[{id:"urbana",name:"Urbana",price:4000},{id:"electrica",name:"Eléctrica",price:7000},{id:"montana",name:"Montaña",price:5000}];
+var ROUTES=[
+ {id:"clasico",name:"Santiago Clásico",type:"Cultural",level:"Fácil",km:8.5,h:2.5,fit:"turista",
+  desc:"Lo imperdible del centro histórico, con retos en cada parada.",
+  pts:[[40,150],[95,110],[170,85],[255,55]],
+  stops:[
+   {n:"Plaza de Armas",fact:"Es el punto de origen de la ciudad: Santiago se fundó en 1541 a los pies del cerro Huelén.",q:"¿En qué año se fundó Santiago?",o:["1541","1810","1650"],a:0},
+   {n:"Mercado Central",fact:"Inaugurado en 1872, es famoso por sus pescados y mariscos.",q:"¿Qué se vende principalmente en el Mercado Central?",o:["Pescados y mariscos","Ropa de segunda mano","Flores"],a:0},
+   {n:"Parque Forestal",fact:"Un parque largo y arbolado que acompaña la ribera del río Mapocho.",q:"¿Qué río pasa junto al Parque Forestal?",o:["Maipo","Mapocho","Biobío"],a:1},
+   {n:"Cerro Santa Lucía",fact:"Antes de llamarse así, los mapuche lo conocían como Huelén.",q:"¿Cuál era el nombre original del cerro?",o:["Huelén","Calán","Chena"],a:0}]},
+ {id:"barrios",name:"Barrios y Cerros",type:"Barrios",level:"Media",km:12,h:3,fit:"ciudadano",
+  desc:"Sal de la rutina: barrios con historia y una subida con vista.",
+  pts:[[35,140],[100,95],[180,110],[270,45]],
+  stops:[
+   {n:"Barrio Yungay",fact:"Uno de los barrios más antiguos de Santiago, con casonas y pasajes patrimoniales.",q:"¿Qué caracteriza a Yungay?",o:["Rascacielos","Casonas y pasajes antiguos","Playas"],a:1},
+   {n:"Bellavista",fact:"Allí está La Chascona, una de las casas de Pablo Neruda.",q:"¿Qué poeta tuvo su casa La Chascona aquí?",o:["Gabriela Mistral","Pablo Neruda","Nicanor Parra"],a:1},
+   {n:"Cerro San Cristóbal",fact:"Desde su cima se ve toda la ciudad y, en días despejados, la cordillera.",q:"¿Qué se ve de fondo desde la cima en días despejados?",o:["El mar","La cordillera","El desierto"],a:1}]},
+ {id:"rio",name:"Río y Parques",type:"Naturaleza",level:"Fácil",km:14,h:2.5,fit:"ambos",
+  desc:"Ciclovías junto al río y parques abiertos, ideal para pedalear sin apuro.",
+  pts:[[30,60],[110,95],[200,120],[280,150]],
+  stops:[
+   {n:"Parque Forestal",fact:"Punto de partida sobre la ribera norte del río Mapocho.",q:"¿Qué tipo de espacio es el Parque Forestal?",o:["Un parque urbano","Un aeropuerto","Un estadio"],a:0},
+   {n:"Ciclovía del Mapocho",fact:"Sigue el cauce del río y permite avanzar sin cruzar calles.",q:"¿Qué cordillera aparece de fondo en el recorrido?",o:["Los Andes","Los Pirineos","Los Alpes"],a:0},
+   {n:"Parque Bicentenario",fact:"Tiene una laguna donde suelen verse aves, entre ellas flamencos.",q:"¿Qué ave se puede ver en su laguna?",o:["Pingüinos","Flamencos","Cóndores"],a:1}]},
+ {id:"italia",name:"Barrio Italia y Franklin",type:"Barrios",level:"Fácil",km:9,h:2,fit:"ciudadano",
+  desc:"Diseño, anticuarios y un persa gigante: un Santiago poco turístico.",
+  pts:[[40,60],[130,100],[230,130],[285,70]],
+  stops:[
+   {n:"Barrio Italia",fact:"Conocido por sus anticuarios, talleres y tiendas de diseño.",q:"¿Qué se encuentra en Barrio Italia?",o:["Anticuarios y diseño","Puertos","Minas"],a:0},
+   {n:"Persa Bío Bío",fact:"Feria de objetos usados y antigüedades en el barrio Franklin.",q:"¿Qué tipo de mercado es un persa?",o:["De objetos usados y variados","Solo de verduras","De autos nuevos"],a:0},
+   {n:"Parque O'Higgins",fact:"Cada septiembre recibe a miles de personas en la fonda de Fiestas Patrias.",q:"¿Qué fiesta se celebra allí en septiembre?",o:["Fiestas Patrias","Año Nuevo","Carnaval"],a:0}]}
+];
+var BADGES=[
+ {id:"first",name:"Primera ruta",desc:"Completa una ruta",ic:"M5 17l4-9 4 6 3-4 3 7"},
+ {id:"curious",name:"Curioso",desc:"3 respuestas correctas",ic:"M12 17v.01M9.5 9a2.5 2.5 0 115 0c0 1.5-2.5 2-2.5 4"},
+ {id:"explorer",name:"Explorador",desc:"Visita 2 rutas distintas",ic:"M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"},
+ {id:"fan",name:"Pedalista",desc:"Suma 100 puntos",ic:"M13 3L5 14h6l-1 7 8-11h-6z"}
+];
+/* ===== Estado ===== */
+var S={profile:null,op:"orange",tab:"home",screen:"welcome",route:null,fType:"Todas",fLevel:"Todas",
+ booking:null,form:{},errors:{},ride:null,points:0,correct:0,done:[],hist:[],badges:{},sheet:null};
+function $(id){return document.getElementById(id)}
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function op(){return OPERATORS.filter(function(o){return o.id===S.op})[0]}
+function route(id){return ROUTES.filter(function(r){return r.id===id})[0]}
+function money(n){return "$"+n.toLocaleString("es-CL")}
+function hrs(h){var m=Math.round(h*60);return Math.floor(m/60)+" h"+(m%60?" "+(m%60)+" min":"")}
+function tomorrow(){var d=new Date();d.setDate(d.getDate()+1);return d.toISOString().slice(0,10)}
+var IC={
+ home:"M3 11l9-8 9 8M5 10v10h14V10",
+ book:"M4 5h16v14H4zM4 9h16M9 3v4M15 3v4",
+ ride:"M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11zM12 12a2 2 0 100-4 2 2 0 000 4",
+ prog:"M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0zM17 5h3v2a3 3 0 01-3 3M7 5H4v2a3 3 0 003 3"};
+/* ===== Mapa esquemático ===== */
+function mapSvg(r,cur){
+ var p=r.pts,pl=p.map(function(a){return a.join(",")}).join(" "),s="";
+ s+='<svg class="map" viewBox="0 0 320 190" role="img" aria-label="Mapa esquemático de la ruta '+esc(r.name)+'">';
+ s+='<rect width="320" height="190" fill="var(--map-land)"/>';
+ s+='<path d="M-10 165 C70 140 120 175 190 150 S300 120 330 135 L330 200 L-10 200Z" fill="var(--map-water)"/>';
+ s+='<ellipse cx="250" cy="150" rx="40" ry="16" fill="var(--map-park)" opacity="0"/>';
+ s+='<rect x="12" y="20" width="60" height="34" rx="8" fill="var(--map-park)"/><rect x="215" y="95" width="70" height="30" rx="8" fill="var(--map-park)"/>';
+ s+='<polyline points="'+pl+'" fill="none" stroke="var(--brand)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 9" />';
+ s+='<polyline points="'+pl+'" fill="none" stroke="var(--brand)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>';
+ p.forEach(function(a,i){
+  var done=cur!=null&&i<cur,now=cur===i;
+  s+='<circle cx="'+a[0]+'" cy="'+a[1]+'" r="'+(now?13:10)+'" fill="'+(done?"var(--ok)":"var(--brand)")+'" stroke="var(--surface)" stroke-width="2.5"/>';
+  s+='<text x="'+a[0]+'" y="'+(a[1]+4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="Inter,sans-serif">'+(i+1)+'</text>';
+ });
+ if(cur!=null&&cur<p.length){var a=p[cur];s+='<circle cx="'+a[0]+'" cy="'+a[1]+'" r="19" fill="none" stroke="var(--brand)" stroke-width="2" opacity=".6"/>'}
+ s+='<text x="10" y="183" font-size="9" fill="var(--fg)" font-family="Inter,sans-serif" opacity=".7">Mapa esquemático de ejemplo (no a escala)</text>';
+ return s+"</svg>";
+}
+/* ===== Vistas ===== */
+function setBrand(){var o=op();$("phone").style.setProperty("--brand",o.brand);$("opname").innerHTML=esc(o.name)+"<small>Tour en bicicleta · Santiago</small>";document.title=o.name}
+function tabs(){
+ var T=[["home","Inicio"],["book","Reservar"],["ride","Mi ruta"],["prog","Progreso"]];
+ $("tabs").innerHTML=S.screen==="welcome"?"":T.map(function(t){
+  return '<button class="tab" data-act="tab" data-v="'+t[0]+'"'+(S.tab===t[0]?' aria-current="page"':"")+'><svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+IC[t[0]]+'"/></svg>'+t[1]+"</button>"}).join("");
+ $("tabs").style.display=S.screen==="welcome"?"none":"";
+}
+function vWelcome(){
+ return '<div><div class="eyebrow">Bienvenido/a</div><h1 style="font-size:26px;margin-top:4px">Pedalea Santiago a tu manera</h1></div>'+
+ '<p>Rutas guiadas, autónomas y con retos. Cuéntanos qué buscas y te mostramos lo que mejor se ajusta.</p>'+
+ '<button class="route" data-act="profile" data-v="turista"><h3>Soy turista</h3><p class="hint">Quiero lo típico de Santiago, pero entretenido e interactivo, a mi ritmo y sin ir en bus ni van.</p></button>'+
+ '<button class="route" data-act="profile" data-v="ciudadano"><h3>Vivo en Santiago</h3><p class="hint">Estoy en la rutina y quiero conocer lugares distintos de mi propia ciudad.</p></button>'+
+ '<p class="ex">Prototipo de ejemplo: las rutas, precios y puntos de retiro son datos ilustrativos.</p>';
+}
+function filtered(){
+ return ROUTES.filter(function(r){return (S.fType==="Todas"||r.type===S.fType)&&(S.fLevel==="Todas"||r.level===S.fLevel)})
+  .sort(function(a,b){var fa=a.fit===S.profile||a.fit==="ambos"?0:1,fb=b.fit===S.profile||b.fit==="ambos"?0:1;return fa-fb});
+}
+function vHome(){
+ var t=S.profile==="turista";
+ var h='<div><div class="eyebrow">'+(t?"Perfil turista":"Perfil ciudadano")+'</div><h2 style="font-size:23px;margin-top:3px">'+(t?"Lo típico, a tu ritmo":"Descubre tu ciudad con otros ojos")+'</h2></div>';
+ h+='<div class="filters" role="group" aria-label="Tipo de ruta">'+["Todas","Cultural","Barrios","Naturaleza"].map(function(x){return '<button class="f" data-act="ftype" data-v="'+x+'" aria-pressed="'+(S.fType===x)+'">'+x+"</button>"}).join("")+"</div>";
+ h+='<div class="filters" role="group" aria-label="Dificultad">'+["Todas","Fácil","Media"].map(function(x){return '<button class="f" data-act="flevel" data-v="'+x+'" aria-pressed="'+(S.fLevel===x)+'">'+(x==="Todas"?"Cualquier dificultad":x)+"</button>"}).join("")+"</div>";
+ var L=filtered();
+ if(!L.length)h+='<div class="card">No hay rutas con esos filtros. Prueba con otra combinación.</div>';
+ L.forEach(function(r){
+  var rec=r.fit===S.profile||r.fit==="ambos";
+  h+='<button class="route" data-act="route" data-v="'+r.id+'"><div class="meta">'+(rec?'<span class="chip for">Para ti</span>':"")+'<span class="chip">'+r.type+'</span></div><h3>'+esc(r.name)+'</h3><p class="hint">'+esc(r.desc)+'</p><div class="meta"><span class="chip">'+r.km+' km</span><span class="chip">'+hrs(r.h)+'</span><span class="chip">'+r.level+'</span><span class="chip">'+r.stops.length+' paradas</span></div></button>';
+ });
+ h+='<button class="back" data-act="welcome">Cambiar perfil</button>';
+ return h;
+}
+function vDetail(){
+ var r=route(S.route),h='<button class="back" data-act="tab" data-v="home">← Volver a rutas</button><div><h2 style="font-size:24px">'+esc(r.name)+'</h2><p class="hint" style="margin-top:4px">'+esc(r.desc)+"</p></div>";
+ h+=mapSvg(r,null);
+ h+='<div class="meta"><span class="chip">'+r.km+' km</span><span class="chip">'+hrs(r.h)+'</span><span class="chip">'+r.level+'</span><span class="chip">'+r.type+'</span></div>';
+ h+='<div class="eyebrow">Paradas</div><ol class="stoplist">'+r.stops.map(function(s,i){return '<li><span class="num">'+(i+1)+'</span><div><b>'+esc(s.n)+'</b><p class="hint">'+esc(s.fact)+"</p></div></li>"}).join("")+"</ol>";
+ h+='<button class="btn" data-act="goBook">Reservar bicicleta para esta ruta</button><button class="btn sec" data-act="demo">Probar la ruta sin reservar (demo)</button>';
+ return h;
+}
+function vBook(){
+ var f=S.form,E=S.errors,o=op();
+ if(S.booking&&S.screen==="confirm"){
+  var b=S.booking,r=route(b.route);
+  return '<div><div class="ok">Reserva confirmada</div><h2 style="font-size:23px;margin-top:4px">¡Listo, '+esc(b.name)+'!</h2></div>'+
+  '<div class="card" style="display:flex;flex-direction:column;gap:6px"><div class="eyebrow">Código de reserva</div><div class="code">'+b.code+'</div>'+
+  '<div><b>'+esc(r.name)+'</b></div><div class="hint">'+esc(b.date.split("-").reverse().join("-"))+' · '+esc(b.time)+' · '+hrs(b.dur)+'</div><div class="hint">Retiro: '+esc(b.pickup)+'</div><div class="hint">Bicicleta '+esc(b.bike.name.toLowerCase())+'</div><div><b>Total de ejemplo: '+money(b.total)+'</b></div></div>'+
+  '<p class="hint">Muestra este código en el punto de retiro. Es un prototipo: no se envía ninguna reserva real.</p>'+
+  '<button class="btn" data-act="startRide">Iniciar ruta</button><button class="btn sec" data-act="newBook">Hacer otra reserva</button>';
+ }
+ var rid=f.route||S.route||ROUTES[0].id;
+ var h='<div><h2 style="font-size:23px">Reservar bicicleta</h2><p class="hint">Elige ruta, punto de retiro y horario.</p></div>';
+ h+='<div class="field"><label for="f-route">Ruta</label><select id="f-route" data-f="route">'+ROUTES.map(function(r){return '<option value="'+r.id+'"'+(r.id===rid?" selected":"")+">"+esc(r.name)+"</option>"}).join("")+"</select></div>";
+ h+='<div class="field"><label for="f-pick">Punto de retiro ('+esc(o.name)+')</label><select id="f-pick" data-f="pickup">'+o.pickups.map(function(p){return '<option'+(f.pickup===p?" selected":"")+">"+esc(p)+"</option>"}).join("")+"</select></div>";
+ h+='<div class="row"><div class="field"><label for="f-date">Fecha</label><input type="date" id="f-date" data-f="date" min="'+tomorrow()+'" value="'+(f.date||tomorrow())+'">'+(E.date?'<div class="err">'+E.date+"</div>":"")+'</div><div class="field"><label for="f-time">Hora</label><select id="f-time" data-f="time">'+["09:00","10:00","11:00","12:00","15:00","16:00"].map(function(t){return "<option"+(f.time===t?" selected":"")+">"+t+"</option>"}).join("")+"</select></div></div>";
+ h+='<div class="field"><label for="f-dur">Duración</label><select id="f-dur" data-f="dur">'+[2,3,4].map(function(d){return '<option value="'+d+'"'+(String(f.dur||Math.ceil(route(rid).h))===String(d)?" selected":"")+">"+d+" horas</option>"}).join("")+"</select></div>";
+ h+='<div><span class="lbl">Tipo de bicicleta</span><div class="bikes">'+BIKES.map(function(b){return '<button type="button" class="bike" data-act="bike" data-v="'+b.id+'" aria-pressed="'+((f.bike||"urbana")===b.id)+'"><b>'+b.name+"</b>"+money(b.price)+"/h</button>"}).join("")+'</div><p class="ex" style="margin-top:4px">Valores de ejemplo.</p></div>';
+ h+='<div class="field"><label for="f-name">Nombre de quien retira</label><input id="f-name" data-f="name" autocomplete="name" placeholder="Ej.: Camila Rojas" value="'+esc(f.name||"")+'">'+(E.name?'<div class="err">'+E.name+"</div>":"")+"</div>";
+ var bk=BIKES.filter(function(b){return b.id===(f.bike||"urbana")})[0],d=Number(f.dur||Math.ceil(route(rid).h));
+ h+='<div class="card row" style="align-items:center"><span class="hint">Total estimado</span><b style="text-align:right;font-size:18px">'+money(bk.price*d)+"</b></div>";
+ h+='<button class="btn" data-act="confirm">Confirmar reserva</button>';
+ return h;
+}
+function vRide(){
+ var R=S.ride;
+ if(!R){
+  if(S.booking)return '<div><h2 style="font-size:23px">Tu reserva</h2></div><div class="card"><b>'+esc(route(S.booking.route).name)+'</b><p class="hint">'+esc(S.booking.date)+' · '+esc(S.booking.time)+' · código '+S.booking.code+'</p></div><button class="btn" data-act="startRide">Iniciar ruta</button>';
+  return '<div><h2 style="font-size:23px">Mi ruta</h2></div><div class="card"><p>Aún no tienes una ruta activa.</p><p class="hint" style="margin-top:4px">Elige una ruta y reserva tu bicicleta para comenzar la guía paso a paso.</p></div><button class="btn" data-act="tab" data-v="home">Ver rutas</button>';
+ }
+ var r=route(R.id),n=r.stops.length;
+ if(R.stage==="rate"){
+  return '<div><div class="ok">Ruta terminada</div><h2 style="font-size:23px;margin-top:4px">¿Cómo estuvo '+esc(r.name)+'?</h2></div><div class="stars" role="group" aria-label="Valoración">'+[1,2,3,4,5].map(function(i){return '<button class="star'+(i<=R.stars?" on":"")+'" data-act="star" data-v="'+i+'" aria-label="'+i+' estrellas">★</button>'}).join("")+'</div><div class="field"><label for="f-com">Comentario (opcional)</label><textarea id="f-com" rows="3" data-f="comment" placeholder="Cuéntanos qué te gustó o qué mejorarías"></textarea></div><button class="btn" data-act="rate"'+(R.stars?"":" disabled")+'>Enviar valoración</button>';
+ }
+ if(R.stage==="end"){
+  return '<div><div class="ok">¡Gracias por tu valoración!</div><h2 style="font-size:23px;margin-top:4px">Sumaste '+R.gain+' puntos</h2></div><div class="card"><p class="hint">Total acumulado</p><div class="pts">'+S.points+'</div></div><button class="btn" data-act="tab" data-v="prog">Ver mi progreso</button><button class="btn sec" data-act="tab" data-v="home">Elegir otra ruta</button>';
+ }
+ var s=r.stops[R.idx],h='<div class="row" style="align-items:center"><div><div class="eyebrow">'+esc(r.name)+'</div><b>Parada '+(R.idx+1)+" de "+n+'</b></div><div style="text-align:right"><b>'+R.gain+' pts</b></div></div>';
+ h+='<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="'+n+'" aria-valuenow="'+R.idx+'"><i style="width:'+(R.idx/n*100)+'%"></i></div>'+mapSvg(r,R.idx);
+ if(R.stage==="go"){
+  h+='<div class="card"><div class="eyebrow">Próxima parada</div><h3 style="font-size:20px;margin:3px 0">'+esc(s.n)+'</h3><p class="hint">Pedalea hasta este punto y presiona el botón al llegar.</p></div><button class="btn" data-act="arrive">Llegué a la parada</button>';
+ }else{
+  h+='<div class="card"><div class="eyebrow">Dato curioso</div><h3 style="font-size:19px;margin:3px 0 6px">'+esc(s.n)+'</h3><p>'+esc(s.fact)+'</p></div>';
+  h+='<div class="card" style="display:flex;flex-direction:column;gap:8px"><div class="eyebrow">Reto · +20 puntos</div><b>'+esc(s.q)+"</b>"+s.o.map(function(t,i){
+   var cls="opt";if(R.ans!=null){if(i===s.a)cls+=" right";else if(i===R.ans)cls+=" wrong"}
+   return '<button class="'+cls+'" data-act="answer" data-v="'+i+'"'+(R.ans!=null?" disabled":"")+">"+esc(t)+"</button>"}).join("");
+  if(R.ans!=null)h+='<p class="'+(R.ans===s.a?"ok":"hint")+'">'+(R.ans===s.a?"¡Correcto! +20 puntos":"Casi. La respuesta correcta está marcada en verde.")+"</p>";
+  h+="</div>";
+  h+='<button class="btn" data-act="next"'+(R.ans==null?" disabled":"")+">"+(R.idx+1<n?"Siguiente parada":"Terminar ruta")+"</button>";
+ }
+ return h;
+}
+function vProg(){
+ var h='<div><h2 style="font-size:23px">Tu progreso</h2></div><div class="card"><p class="hint">Puntos acumulados</p><div class="pts">'+S.points+'</div><p class="hint">'+S.done.length+' ruta(s) completada(s) · '+S.correct+' respuesta(s) correcta(s)</p></div>';
+ h+='<div class="eyebrow">Insignias</div><div class="badges">'+BADGES.map(function(b){var on=S.badges[b.id];return '<div class="badge'+(on?" on":"")+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+b.ic+'"/></svg><b style="display:block;font-size:13px;color:var(--fg)">'+b.name+'</b><span style="font-size:12px">'+(on?"Obtenida":b.desc)+"</span></div>"}).join("")+"</div>";
+ h+='<div class="eyebrow">Historial</div>';
+ h+=S.hist.length?'<ul class="stoplist">'+S.hist.map(function(x){return '<li><span class="num done">✓</span><div><b>'+esc(x.name)+'</b><p class="hint">'+x.stars+" de 5 estrellas · +"+x.gain+" pts</p></div></li>"}).join("")+"</ul>":'<div class="card hint">Aún no hay rutas completadas. Tu primera ruta aparecerá aquí.</div>';
+ return h;
+}
+function sheet(){
+ var el=$("sheet");
+ if(!S.sheet){el.innerHTML="";return}
+ var o=op();
+ el.innerHTML='<div class="sheet" data-act="closeSheet"><div role="dialog" aria-label="Configuración del operador" data-stop="1"><h3 style="font-size:19px">Operador turístico</h3><p class="hint">La misma aplicación se adapta a cada operador: cambian nombre, colores y puntos de retiro. La lógica no cambia.</p>'+
+ OPERATORS.map(function(x){return '<button class="op" data-act="setop" data-v="'+x.id+'" aria-pressed="'+(x.id===S.op)+'"><span class="sw" style="background:'+x.brand+'"></span><span><b>'+esc(x.name)+'</b><br><span class="hint">Retiro: '+x.pickups.join(", ")+"</span></span></button>"}).join("")+
+ '<button class="btn sec" data-act="closeSheet">Cerrar</button></div></div>';
+}
+/* ===== Render ===== */
+function render(){
+ setBrand();
+ var v=$("view");
+ if(S.screen==="welcome")v.innerHTML=vWelcome();
+ else if(S.tab==="home")v.innerHTML=S.screen==="detail"?vDetail():vHome();
+ else if(S.tab==="book")v.innerHTML=vBook();
+ else if(S.tab==="ride")v.innerHTML=vRide();
+ else v.innerHTML=vProg();
+ tabs();sheet();
+}
+function go(tab,screen){S.tab=tab;S.screen=screen||"main";render();$("view").scrollTop=0}
+function award(){
+ var nb=[];
+ if(S.done.length>=1)S.badges.first=1;
+ if(S.correct>=3)S.badges.curious=1;
+ if(S.done.filter(function(x,i,a){return a.indexOf(x)===i}).length>=2)S.badges.explorer=1;
+ if(S.points>=100)S.badges.fan=1;
+}
+function validate(){
+ var f=S.form,E={},d=f.date||tomorrow();
+ if(!(f.name||"").trim())E.name="Ingresa el nombre de quien retira la bicicleta.";
+ if(d<tomorrow())E.date="Elige una fecha desde mañana en adelante.";
+ S.errors=E;return !Object.keys(E).length;
+}
+/* ===== Eventos ===== */
+document.addEventListener("input",function(e){var k=e.target.getAttribute&&e.target.getAttribute("data-f");if(!k)return;
+ if(k==="comment"){if(S.ride)S.ride.comment=e.target.value;return}
+ S.form[k]=e.target.value;
+ if(S.errors[k]){delete S.errors[k];var n=e.target.nextElementSibling;if(n&&n.classList.contains("err"))n.remove()}
+ if(k==="route"){S.route=e.target.value;S.form.dur=String(Math.ceil(route(e.target.value).h));render();return}
+ if(k==="dur"){render();return}
+});
+document.addEventListener("click",function(e){
+ var t=e.target.closest("[data-act]");if(!t)return;
+ if(t.classList.contains("sheet")&&e.target.closest("[data-stop]"))return;
+ var a=t.getAttribute("data-act"),v=t.getAttribute("data-v");
+ if(a==="profile"){S.profile=v;S.fType="Todas";S.fLevel="Todas";go("home")}
+ else if(a==="welcome"){go("home","welcome")}
+ else if(a==="tab"){if(v==="book"){S.form.route=S.form.route||S.route}go(v,"main")}
+ else if(a==="ftype"){S.fType=v;render()}
+ else if(a==="flevel"){S.fLevel=v;render()}
+ else if(a==="route"){S.route=v;go("home","detail")}
+ else if(a==="goBook"){S.form.route=S.route;S.form.dur=String(Math.ceil(route(S.route).h));go("book","main")}
+ else if(a==="bike"){S.form.bike=v;render()}
+ else if(a==="confirm"){
+  S.form.route=S.form.route||S.route||ROUTES[0].id;
+  if(!validate()){render();return}
+  var f=S.form,r=route(f.route),bk=BIKES.filter(function(b){return b.id===(f.bike||"urbana")})[0],d=Number(f.dur||Math.ceil(r.h)),o=op();
+  var c="BO-"+Math.random().toString(36).slice(2,6).toUpperCase();
+  S.booking={route:r.id,pickup:f.pickup||o.pickups[0],date:f.date||tomorrow(),time:f.time||"09:00",dur:d,bike:bk,name:f.name.trim(),code:c,total:bk.price*d};
+  S.screen="confirm";render();$("view").scrollTop=0}
+ else if(a==="newBook"){S.booking=null;S.form={};S.errors={};S.screen="main";render()}
+ else if(a==="startRide"){S.ride={id:S.booking.route,idx:0,stage:"go",gain:0,ans:null,stars:0,comment:""};S.screen="main";go("ride")}
+ else if(a==="demo"){S.ride={id:S.route,idx:0,stage:"go",gain:0,ans:null,stars:0,comment:""};go("ride")}
+ else if(a==="arrive"){S.ride.stage="stop";S.ride.ans=null;S.ride.gain+=10;S.points+=10;render()}
+ else if(a==="answer"){var R=S.ride,s=route(R.id).stops[R.idx];R.ans=Number(v);if(R.ans===s.a){R.gain+=20;S.points+=20;S.correct++}render()}
+ else if(a==="next"){var R2=S.ride;if(R2.idx+1<route(R2.id).stops.length){R2.idx++;R2.stage="go";R2.ans=null}else{R2.stage="rate"}render();$("view").scrollTop=0}
+ else if(a==="star"){S.ride.stars=Number(v);render()}
+ else if(a==="rate"){var R3=S.ride;S.done.push(R3.id);S.hist.unshift({name:route(R3.id).name,stars:R3.stars,gain:R3.gain});award();R3.stage="end";render()}
+ else if(a==="operators"){S.sheet=1;render()}
+ else if(a==="closeSheet"){S.sheet=null;render()}
+ else if(a==="setop"){S.op=v;S.form.pickup=null;S.sheet=null;render()}
+});
+render();
+})();
+</script>
+
+</body>
+</html>
